@@ -51,7 +51,7 @@ def TSMA(ohlc, params):
         ohlc['Stance'] = np.where(ohlc['FACTOR1'] > threshold, 0, ohlc['Stance'])
     elif direction == "LS":
         ohlc['Stance'] = np.where((ohlc['FACTOR1'] > threshold) & (ohlc['FACTOR2'] > threshold), 1, 0)
-        ohlc['Stance'] = np.where(ohlc['FACTOR1'] < -threshold, -1, ohlc['Stance'])
+        ohlc['Stance'] = np.where((ohlc['FACTOR1'] < threshold) & (ohlc['FACTOR2'] < threshold), -1, 0)
     else:
         raise Exception("direction should be 'Long', 'Short', 'LS'")
 
@@ -79,11 +79,11 @@ def TPRICE(ohlc, params):
         ohlc['Stance'] = np.where((ohlc['FACTOR1'] > threshold) & (ohlc['FACTOR2'] > threshold), 1, 0)
         ohlc['Stance'] = np.where(ohlc['FACTOR1'] < -threshold, 0, ohlc['Stance'])
     elif direction == "Short":
-        ohlc['Stance'] = np.where((ohlc['FACTOR1'] > threshold) & (ohlc['FACTOR2'] > threshold), 0, 0)
-        ohlc['Stance'] = np.where(ohlc['FACTOR1'] < -threshold, -1, ohlc['Stance'])
+        ohlc['Stance'] = np.where((ohlc['FACTOR1'] < threshold) & (ohlc['FACTOR2'] < threshold), -1, 0)
+        ohlc['Stance'] = np.where(ohlc['FACTOR1'] > threshold, 0, ohlc['Stance'])
     elif direction == "LS":
         ohlc['Stance'] = np.where((ohlc['FACTOR1'] > threshold) & (ohlc['FACTOR2'] > threshold), 1, 0)
-        ohlc['Stance'] = np.where(ohlc['FACTOR1'] < -threshold, -1, ohlc['Stance'])
+        ohlc['Stance'] = np.where((ohlc['FACTOR1'] < threshold) & (ohlc['FACTOR2'] < threshold), -1, 0)
     else:
         raise Exception("direction should be 'Long', 'Short', 'LS'")
 
