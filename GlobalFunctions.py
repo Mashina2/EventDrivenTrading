@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 pd.set_option('display.width', 300)
 pd.set_option('display.max_columns', 30)
 pd.set_option('display.max_rows', 150)
-pd.set_option('precision', 5)
+# pd.set_option('precision', 5)
 pd.set_option('mode.chained_assignment', None) ## turning off SettingWithCopyWarning
 
 

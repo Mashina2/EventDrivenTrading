@@ -14,7 +14,7 @@ from GlobalFunctions import *
 pd.set_option('display.width', 300)
 pd.set_option('display.max_columns', 30)
 pd.set_option('display.max_rows', 150)
-pd.set_option('precision', 5)
+# pd.set_option('precision', 5)
 pd.set_option('mode.chained_assignment', None) ## turning off SettingWithCopyWarning
 
 api_key = 'DVxVn8JHKAfI2By0CqmdFySHmQA5Oiv9RhcANj0KsF7s7EYl9hDc4p0dW3l7daPY'
