@@ -46,13 +46,17 @@ if __name__ == "__main__":
         pair = row['pair']
         interval = row['interval']
 
-        klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=sdate, end_str=edate)
+        idate = dt.datetime.strptime(sdate, "%Y-%m-%d")
+        idate = idate + dt.timedelta(days=-40)
+        idate = idate.strftime("%Y-%m-%d")
+
+        klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=idate, end_str=edate)
         finaldata = binanceOHLC(klines)
         finaldata.index = pd.to_datetime(finaldata.index)
 
         strategy = row['str']
         strResult = BacktestEngine(data = finaldata, strategy = strategy, plot = plot, comms=commission, fundrate = fundrate,
-                                   monthlyStats = monthlyStats, params = row, benchmark = pair)
+                                   monthlyStats = monthlyStats, params = row, benchmark = pair, sdate = sdate)
 
         allrets = strResult['strategyReturns']
         strName = allrets.columns[0]

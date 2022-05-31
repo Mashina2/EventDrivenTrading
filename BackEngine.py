@@ -3,12 +3,13 @@ from Strategies import *
 
 
 def BacktestEngine(data,strategy = "SMA", comms = 10, fundrate = 1, plot = True, monthlyStats = False, params = {},
-                   benchmark = 'ETHBTC'):
+                   benchmark = 'ETHBTC', sdate = '2018-01-01'):
 
     data[benchmark] = data['Close'] / data['Close'].shift(1) - 1
 
     data = globals()[strategy](data, params)
-
+    data = data[data.index > sdate]
+    #
     # data = Stance(ohlc = data, threshold = params['threshold'])
     data = data.dropna(axis=0)
     data['Stance'].value_counts()

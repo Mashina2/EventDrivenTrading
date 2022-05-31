@@ -28,8 +28,8 @@ if __name__ == "__main__":
 
     # 8HR
     dictParams = {'short_ma': [1],  ## {'short_ma': range(10, 1000, 10),
-                  'medium_ma': [7],  ## 'long_ma': range(100, 10000, 100),
-                  'long_ma': [10],
+                  'medium_ma': [21],  ## 'long_ma': range(100, 10000, 100),
+                  'long_ma': [45],
                   'threshold': [0]}  ## 'long_ma': range(100, 10000, 100)
 
     # dictParams = {'short_ma': range(1, 5, 1),  ## {'short_ma': range(10, 1000, 10),
@@ -37,7 +37,11 @@ if __name__ == "__main__":
     #               'long_ma': range(21, 41, 3),
     #               'threshold': [0]}  ## 'long_ma': range(100, 10000, 100),
 
-    klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=sdate, end_str=edate)
+    idate = dt.datetime.strptime(sdate, "%Y-%m-%d")
+    idate = idate + dt.timedelta(days=-40)
+    idate = idate.strftime("%Y-%m-%d")
+
+    klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=idate, end_str=edate)
     finaldata = binanceOHLC(klines)
     finaldata.index = pd.to_datetime(finaldata.index)
 
@@ -55,7 +59,7 @@ if __name__ == "__main__":
         print('\n', '---------------Now doing combination ' f"{index}/{len(params)}---------------", '\n')
         row['index'] = index
         strResult = BacktestEngine(data = finaldata, strategy = strategy, plot = plot, comms=commission, fundrate = fundrate,
-                                   monthlyStats = monthlyStats, params = row, benchmark = pair)
+                                   monthlyStats = monthlyStats, params = row, benchmark = pair, sdate = sdate)
 
         allrets = strResult['strategyReturns']
         strName = allrets.columns[0]
@@ -95,7 +99,7 @@ if __name__ == "__main__":
 
 # strResult['Trades']
 # strResult['tradeAction']
-# strResult['allData']
+strResult['allData']
 # strResult['OriginalReturns']
 # savepkl('BTCETH1hPerform', allPerform)
 # strResult.keys()
