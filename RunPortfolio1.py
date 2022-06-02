@@ -69,8 +69,9 @@ if __name__ == "__main__":
 
         getStats = statistics(allrets, N=N)
         getStats['short_ma'] = row['short_ma']
+        getStats['medium_ma'] = row['medium_ma']
         getStats['long_ma'] = row['long_ma']
-        getStats['threshold'] = row['threshold']
+        # getStats['threshold'] = row['threshold']
 
         allPerform = allPerform.append(getStats.iloc[[0]])
 
