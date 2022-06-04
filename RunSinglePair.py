@@ -19,9 +19,9 @@ if __name__ == "__main__":
     edate = edate.strftime("%Y-%m-%d")
     # edate = "2022-05-12"
     pair = 'ETHBTC' #ETHBTC BTCUSDT
-    interval = '1h'
+    interval = '8h'
     desiredInterval = '24h'
-    desiredHour = '18'
+    desiredHour = '13'
     switchInterval = False
     Direction = "Long" # Long, Short, LS
     commission = 10 ### bps
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     #               'threshold': [0]}  ## 'long_ma': range(100, 10000, 100),
 
     idate = dt.datetime.strptime(sdate, "%Y-%m-%d")
-    idate = idate + dt.timedelta(days=-40)
+    idate = idate + dt.timedelta(days=-100)
     idate = idate.strftime("%Y-%m-%d")
 
     klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=idate, end_str=edate)
@@ -53,6 +53,9 @@ if __name__ == "__main__":
     if (switchInterval):
         finaldata = modifyOHLCtime(OHLC = finaldata,currentInterval = interval,desiredInterval = desiredInterval,
                                    desiredHour = desiredHour)
+        finaldata = finaldata.set_index('Close time')
+        # finaldata.index = pd.to_datetime(finaldata.index)
+        # type(finaldata.index)
 
     AllParams = expand_grid(dictParams)
     params = AllParams[(AllParams['long_ma'] - AllParams['short_ma']) >= 1]
@@ -80,7 +83,13 @@ if __name__ == "__main__":
         getStats['short_ma'] = row['short_ma']
         getStats['medium_ma'] = row['medium_ma']
         getStats['long_ma'] = row['long_ma']
+
+        corrMtx = allrets.corr()
         #getStats['threshold'] = row['threshold']
+
+        # rr = allrets.reset_index(drop=True)
+        # rr.corr()
+        # correlation = allrets.iloc[:, 0].corr(allrets.iloc[:, 1])
 
         allPerform = allPerform.append(getStats.iloc[[0]])
 
@@ -95,6 +104,7 @@ if __name__ == "__main__":
             trades = strResult['Trades']
 
         print(getStats,'\n')
+        print(corrMtx, '\n')
         print(f"{strName} Monthly Return", '\n', strclndRets, '\n')
         print(f"{pair} Monthly Return", '\n', bnchclndRets, '\n')
         print(trades,'\n')

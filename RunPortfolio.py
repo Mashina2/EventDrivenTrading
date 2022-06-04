@@ -120,9 +120,12 @@ if __name__ == "__main__":
     if not monthlyStats:
         port = MonthlyRets(port)
 
+    corrMtx = port.corr()
     strclndPort = CalendarRets(port[['Portfolio']])
 
     print('\n', portStats, '\n')
+    print(corrMtx, '\n')
+
     print(f"Portfolio Monthly Return", '\n', strclndPort, '\n')
 
     cumRets = (1 + port).cumprod() - 1
