@@ -10,10 +10,13 @@ warnings.filterwarnings("ignore")
 if __name__ == "__main__":
 
     ### Fetch data first from binance "2020-08-04"##
+    strategy = 'TSMA'
     sdate = "2018-01-01"
     edate = dt.datetime.today()
     edate = edate.strftime("%Y-%m-%d")
     # edate = "2022-05-12"
+    interval = '8h'
+    Direction = "Long" # Long, Short, LS
     commission = 10 ### bps
     fundrate = 0 ### bps
     plot = True
@@ -22,16 +25,17 @@ if __name__ == "__main__":
     N = 365
 
     # 8HR
-    dictParams = {'PORT1': {'str':'TSMA', 'pair': 'ETHUSDT', 'interval': '8h', 'Direction':'Long',
-                            'short_ma': 1, 'medium_ma': 7, 'long_ma': 10, 'threshold': 0},
-                  'PORT2': {'str':'TSMA', 'pair': 'BTCUSDT', 'interval': '4h', 'Direction':'Long',
-                            'short_ma': 1, 'medium_ma': 10, 'long_ma': 12, 'threshold': 0},
-                  'PORT3': {'str':'TPRICE', 'pair': 'BNBUSDT', 'interval': '1d', 'Direction':'Long',
-                            'short_ma': 1, 'medium_ma': 15, 'long_ma': 40, 'threshold': 0}
-                  }
+    dictParams = {'pair': ['ETHUSDT', 'BTCUSDT'],
+                  'short_ma': [1],  ## {'short_ma': range(10, 1000, 10),
+                  'medium_ma': [7],  ## 'long_ma': range(100, 10000, 100),
+                  'long_ma': [10],
+                  'threshold': [0]}  ## 'long_ma': range(100, 10000, 100)
 
-    params = pd.DataFrame(dictParams)
-    params = params.T
+    AllParams = expand_grid(dictParams)
+    params = AllParams[(AllParams['long_ma'] - AllParams['short_ma']) >= 1]
+    params.index = range(1, len(params) + 1)
+    params['Direction'] = Direction
+
     start = tt.time()
 
     allPerform = pd.DataFrame()
@@ -41,22 +45,15 @@ if __name__ == "__main__":
     for index, row in params.iterrows():
 
         print('\n', '---------------Now doing combination ' f"{index}/{len(params)}---------------", '\n')
-
         row['index'] = index
         pair = row['pair']
-        interval = row['interval']
 
-        idate = dt.datetime.strptime(sdate, "%Y-%m-%d")
-        idate = idate + dt.timedelta(days=-40)
-        idate = idate.strftime("%Y-%m-%d")
-
-        klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=idate, end_str=edate)
+        klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=sdate, end_str=edate)
         finaldata = binanceOHLC(klines)
         finaldata.index = pd.to_datetime(finaldata.index)
 
-        strategy = row['str']
         strResult = BacktestEngine(data = finaldata, strategy = strategy, plot = plot, comms=commission, fundrate = fundrate,
-                                   monthlyStats = monthlyStats, params = row, benchmark = pair, sdate = sdate)
+                                   monthlyStats = monthlyStats, params = row, benchmark = pair)
 
         allrets = strResult['strategyReturns']
         strName = allrets.columns[0]
@@ -69,9 +66,8 @@ if __name__ == "__main__":
 
         getStats = statistics(allrets, N=N)
         getStats['short_ma'] = row['short_ma']
-        getStats['medium_ma'] = row['medium_ma']
         getStats['long_ma'] = row['long_ma']
-        # getStats['threshold'] = row['threshold']
+        getStats['threshold'] = row['threshold']
 
         allPerform = allPerform.append(getStats.iloc[[0]])
 
@@ -91,14 +87,12 @@ if __name__ == "__main__":
 
     latency = tt.time() - start
 
-    print(f"Iterating {len(dictParams)} {strName} combinations took {latency:.3f} seconds", '\n')
-
-    print('\n', "---------------Rank portfolios by Sharpe Ratio---------------", '\n')
-
-    allPerform = allPerform.sort_values(by='Sharpe Ratio', ascending=False)
-    print(allPerform)
+    print(f"Iterating {len(params)} {strName} combinations took {latency:.3f} seconds", '\n')
 
     print('\n', "---------------Now doing Portfolio calculation---------------", '\n')
+
+    allPerform = allPerform.sort_values(by='Calmar Ratio', ascending=False)
+    print(allPerform)
 
     #### Portfolio performance
     mulrets = mulrets.T

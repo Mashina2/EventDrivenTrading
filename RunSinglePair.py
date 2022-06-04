@@ -98,6 +98,11 @@ if __name__ == "__main__":
     allPerform = allPerform.sort_values(by='Calmar Ratio', ascending=False)
     print(allPerform)
 
+aa = strResult['LongTradesAls']
+len(aa[aa['Return']<0]['Return'])
+
+aa.tail()
+
 # strResult['Trades']
 # strResult['tradeAction']
 strResult['allData']

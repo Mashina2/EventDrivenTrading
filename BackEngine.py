@@ -39,6 +39,45 @@ def BacktestEngine(data,strategy = "SMA", comms = 10, fundrate = 1, plot = True,
     SellOpen.loc[SellOpenRule] = pair.loc[SellOpenRule]
     SellClose.loc[SellCloseRule] = pair.loc[SellCloseRule]
 
+    ### LONG TRADES ANALYSIS
+    buyOpenDates = BuyOpen.loc[BuyOpenRule]
+    buyOpenDates = buyOpenDates.reset_index()
+    sellCloseDates = SellClose.loc[SellCloseRule]
+    sellCloseDates = sellCloseDates.reset_index()
+
+    LongTradesAls = {'trade': range(1,len(buyOpenDates) + 1), 'enterTime': buyOpenDates['Close time'],
+                      'exitTime': sellCloseDates['Close time'], 'enterPrice': buyOpenDates['Close'],
+                      'exitPrice': sellCloseDates['Close']}
+    LongTradesAls = pd.DataFrame(data=LongTradesAls)
+    LongTradesAls['Return'] = LongTradesAls['exitPrice'] / LongTradesAls['enterPrice'] - 1
+
+    ### SHORT TRADES ANALYSIS
+    # sellOpenDates = SellOpen.loc[SellOpenRule]
+    # sellOpenDates = sellOpenDates.reset_index()
+    # buyCloseDates = BuyClose.loc[BuyCloseRule]
+    # buyCloseDates = buyCloseDates.reset_index()
+    #
+    # ShortTradesAls = {'trade': range(1, len(sellOpenDates) + 1), 'enterTime': sellOpenDates['Close time'],
+    #                  'exitTime': buyCloseDates['Close time'], 'enterPrice': sellOpenDates['Close'],
+    #                  'exitPrice': buyCloseDates['Close']}
+    # ShortTradesAls = pd.DataFrame(data=ShortTradesAls)
+    # ShortTradesAls['Return'] = ShortTradesAls['exitPrice'] / ShortTradesAls['enterPrice'] - 1
+
+    ### LONG SHORT TRADES ANALYSIS
+    # buyOpenDates = BuyOpen.loc[BuyOpenRule]
+    # buyOpenDates = buyOpenDates.reset_index()
+    # sellCloseDates = SellClose.loc[SellCloseRule]
+    # sellCloseDates = sellCloseDates.reset_index()
+    #
+    # LongTradesAls = {'trade': range(1, len(buyOpenDates) + 1), 'enterTime': buyOpenDates['Close time'],
+    #                  'exitTime': sellCloseDates['Close time'], 'enterPrice': buyOpenDates['Close'],
+    #                  'exitPrice': sellCloseDates['Close']}
+    # LongTradesAls = pd.DataFrame(data=LongTradesAls)
+    # LongTradesAls['Return'] = LongTradesAls['exitPrice'] / LongTradesAls['enterPrice'] - 1
+    #
+
+
+
     ### Mark trades
     tradeAction = pd.concat([BuyOpenRule, BuyCloseRule, SellOpenRule, SellCloseRule], axis=1)
     tradeAction.columns = ['Buy Open', 'Buy Close', 'Sell Open', 'Sell Close']
@@ -89,5 +128,7 @@ def BacktestEngine(data,strategy = "SMA", comms = 10, fundrate = 1, plot = True,
     result['allData'] = data
     result['Trades'] = Trades
     result['tradeAction'] = tradeAction
+    result['LongTradesAls'] = LongTradesAls
+    result['ShortTradesAls'] = ShortTradesAls
 
     return result
