@@ -47,40 +47,36 @@ if __name__ == "__main__":
     finaldata = binanceOHLC(klines)
     finaldata.index = pd.to_datetime(finaldata.index)
 
-    def modifyOHLCtime(OHLC,currentInterval = '8h',desireInterval = '24h', desireHour = '16'):
+    def modifyOHLCtime(OHLC = finaldata,currentInterval = '1h',desireInterval = '24h', desireHour = '18'):
 
+        firstDate = OHLC.index[0]
+        desireDate = firstDate.replace(hour=int(desireHour))
 
-    firstDate = finaldata.index[0]
-    desireDate = firstDate.replace(hour=16)
+        OHLC = OHLC[OHLC.index > desireDate]
 
-    aa = finaldata.head(100)
-    aa = finaldata.iloc[3:100]
-    aa[aa.index > desireDate]
+        # daily = finaldata.head(10)
 
+        currentInterval = int(currentInterval[:-1])
+        desireInterval = int(desireInterval[:-1])
+        obs = desireInterval / currentInterval
+        loop = math.floor(len(OHLC)/obs)
 
-    daily = finaldata.head(10)
+        result = math.inf * OHLC.copy()
+        result = result.iloc[0:loop]
+        result = result.reset_index()
 
+        highFreqData = OHLC.reset_index()
 
-    interval1 = int(interval[0])
-    obs = 24 / interval1
-    loop = math.floor(len(aa)/obs)
+        for i in range(loop):
+            result['Close time'].iloc[i] = highFreqData['Close time'].iloc[int(obs*(i+1)-1)]
+            result['Open'].iloc[i] = highFreqData['Open'].iloc[int(obs*(i + 1)-obs)]
+            result['Close'].iloc[i] = highFreqData['Close'].iloc[int(obs * (i + 1)-1)]
+            result['High'].iloc[i] = max(highFreqData['High'].iloc[range(int(obs*(i + 1)-obs),int(obs * (i + 1)))])
+            result['Low'].iloc[i] = min(highFreqData['Low'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))])
+            result['Volume'].iloc[i] = highFreqData['Volume'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
+            result['Number of trades'].iloc[i] = highFreqData['Number of trades'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
 
-    BuyOpen = math.inf * aa.copy()
-    BuyOpen = BuyOpen.iloc[0:loop]
-    BuyOpen = BuyOpen.reset_index()
-
-    highFreqData = aa.reset_index()
-
-    for i in range(loop):
-        BuyOpen['Close time'].iloc[i] = highFreqData['Close time'].iloc[int(obs*(i+1)-1)]
-        BuyOpen['Open'].iloc[i] = highFreqData['Open'].iloc[int(obs*(i + 1)-obs)]
-        BuyOpen['Close'].iloc[i] = highFreqData['Close'].iloc[int(obs * (i + 1)-1)]
-        BuyOpen['High'].iloc[i] = max(highFreqData['High'].iloc[range(int(obs*(i + 1)-obs),int(obs * (i + 1)))])
-        BuyOpen['Low'].iloc[i] = min(highFreqData['Low'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))])
-        BuyOpen['Volume'].iloc[i] = highFreqData['Volume'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
-        BuyOpen['Number of trades'].iloc[i] = highFreqData['Number of trades'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
-
-    
+        return result
 
 
     AllParams = expand_grid(dictParams)
