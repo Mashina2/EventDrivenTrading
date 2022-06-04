@@ -522,3 +522,35 @@ def matching_fills(fills, symbol="", ref_pattern="", action=""):
 def truncate(n, decimals=0):
     multiplier = 10 ** decimals
     return int(n * multiplier) / multiplier
+
+
+def modifyOHLCtime(OHLC,currentInterval = '1h',desiredInterval = '24h', desiredHour = '18'):
+
+    firstDate = OHLC.index[0]
+    desireDate = firstDate.replace(hour=int(desiredHour))
+
+    OHLC = OHLC[OHLC.index > desireDate]
+
+    # daily = finaldata.head(10)
+
+    currentInterval = int(currentInterval[:-1])
+    desireInterval = int(desiredInterval[:-1])
+    obs = desireInterval / currentInterval
+    loop = math.floor(len(OHLC)/obs)
+
+    result = math.inf * OHLC.copy()
+    result = result.iloc[0:loop]
+    result = result.reset_index()
+
+    highFreqData = OHLC.reset_index()
+
+    for i in range(loop):
+        result['Close time'].iloc[i] = highFreqData['Close time'].iloc[int(obs*(i+1)-1)]
+        result['Open'].iloc[i] = highFreqData['Open'].iloc[int(obs*(i + 1)-obs)]
+        result['Close'].iloc[i] = highFreqData['Close'].iloc[int(obs * (i + 1)-1)]
+        result['High'].iloc[i] = max(highFreqData['High'].iloc[range(int(obs*(i + 1)-obs),int(obs * (i + 1)))])
+        result['Low'].iloc[i] = min(highFreqData['Low'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))])
+        result['Volume'].iloc[i] = highFreqData['Volume'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
+        result['Number of trades'].iloc[i] = highFreqData['Number of trades'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
+
+    return result

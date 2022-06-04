@@ -19,7 +19,10 @@ if __name__ == "__main__":
     edate = edate.strftime("%Y-%m-%d")
     # edate = "2022-05-12"
     pair = 'ETHBTC' #ETHBTC BTCUSDT
-    interval = '1d'
+    interval = '1h'
+    desiredInterval = '24h'
+    desiredHour = '18'
+    switchInterval = False
     Direction = "Long" # Long, Short, LS
     commission = 10 ### bps
     fundrate = 0 ### bps
@@ -47,37 +50,9 @@ if __name__ == "__main__":
     finaldata = binanceOHLC(klines)
     finaldata.index = pd.to_datetime(finaldata.index)
 
-    def modifyOHLCtime(OHLC = finaldata,currentInterval = '1h',desireInterval = '24h', desireHour = '18'):
-
-        firstDate = OHLC.index[0]
-        desireDate = firstDate.replace(hour=int(desireHour))
-
-        OHLC = OHLC[OHLC.index > desireDate]
-
-        # daily = finaldata.head(10)
-
-        currentInterval = int(currentInterval[:-1])
-        desireInterval = int(desireInterval[:-1])
-        obs = desireInterval / currentInterval
-        loop = math.floor(len(OHLC)/obs)
-
-        result = math.inf * OHLC.copy()
-        result = result.iloc[0:loop]
-        result = result.reset_index()
-
-        highFreqData = OHLC.reset_index()
-
-        for i in range(loop):
-            result['Close time'].iloc[i] = highFreqData['Close time'].iloc[int(obs*(i+1)-1)]
-            result['Open'].iloc[i] = highFreqData['Open'].iloc[int(obs*(i + 1)-obs)]
-            result['Close'].iloc[i] = highFreqData['Close'].iloc[int(obs * (i + 1)-1)]
-            result['High'].iloc[i] = max(highFreqData['High'].iloc[range(int(obs*(i + 1)-obs),int(obs * (i + 1)))])
-            result['Low'].iloc[i] = min(highFreqData['Low'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))])
-            result['Volume'].iloc[i] = highFreqData['Volume'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
-            result['Number of trades'].iloc[i] = highFreqData['Number of trades'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
-
-        return result
-
+    if (switchInterval):
+        finaldata = modifyOHLCtime(OHLC = finaldata,currentInterval = interval,desiredInterval = desiredInterval,
+                                   desiredHour = desiredHour)
 
     AllParams = expand_grid(dictParams)
     params = AllParams[(AllParams['long_ma'] - AllParams['short_ma']) >= 1]
@@ -138,7 +113,7 @@ if __name__ == "__main__":
 
 # strResult['Trades']
 # strResult['tradeAction']
-strResult['allData']
+# strResult['allData']
 # strResult['OriginalReturns']
 # savepkl('BTCETH1hPerform', allPerform)
 # strResult.keys()
