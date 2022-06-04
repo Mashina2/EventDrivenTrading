@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore")
 if __name__ == "__main__":
 
     ### Fetch data first from binance "2020-08-04"##
-    strategy = 'TPRICE'
+    strategy = 'TSMA'
     sdate = "2018-01-01"
     edate = dt.datetime.today()
     edate = edate.strftime("%Y-%m-%d")
@@ -98,10 +98,10 @@ if __name__ == "__main__":
     allPerform = allPerform.sort_values(by='Calmar Ratio', ascending=False)
     print(allPerform)
 
-aa = strResult['LongTradesAls']
-len(aa[aa['Return']<0]['Return'])
-
-aa.tail()
+# aa = strResult['LongTradesAls']
+# len(aa[aa['Return']<0]['Return'])
+#
+# aa.tail()
 
 # strResult['Trades']
 # strResult['tradeAction']

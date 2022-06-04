@@ -129,6 +129,6 @@ def BacktestEngine(data,strategy = "SMA", comms = 10, fundrate = 1, plot = True,
     result['Trades'] = Trades
     result['tradeAction'] = tradeAction
     result['LongTradesAls'] = LongTradesAls
-    result['ShortTradesAls'] = ShortTradesAls
+    # result['ShortTradesAls'] = ShortTradesAls
 
     return result
