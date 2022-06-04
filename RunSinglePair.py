@@ -19,7 +19,7 @@ if __name__ == "__main__":
     edate = edate.strftime("%Y-%m-%d")
     # edate = "2022-05-12"
     pair = 'ETHBTC' #ETHBTC BTCUSDT
-    interval = '8h'
+    interval = '12h'
     desiredInterval = '24h'
     desiredHour = '13'
     switchInterval = False
