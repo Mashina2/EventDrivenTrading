@@ -184,20 +184,21 @@ def runPlot(data, title = 'Cumulative Return', xlabel = 'Date', ylabel = '%'):
 def statistics(rets, N=252):
 
     stats = pd.DataFrame()
-    stats['Cum. Return'] = (1 + rets).prod() - 1
-    stats['Ann. Return'] = (1 + rets).prod() ** np.sqrt(N / len(rets)) - 1
-    stats['Ann. Vol'] = rets.std() * np.sqrt(N)
-    stats['Max DD'] = maxDD(rets).min()
-    stats['Sharpe Ratio'] = stats['Ann. Return'] / stats['Ann. Vol']
-    stats['Calmar Ratio'] = stats['Ann. Return'] / abs(stats['Max DD'])
+    stats['CumRet'] = (1 + rets).prod() - 1
+    stats['AnnRet'] = (1 + rets).prod() ** np.sqrt(N / len(rets)) - 1
+    stats['AnnVol'] = rets.std() * np.sqrt(N)
+    stats['MaxDD'] = maxDD(rets).min()
+    stats['Sharpe'] = stats['AnnRet'] / stats['AnnVol']
+    stats['Calmar'] = stats['AnnRet'] / abs(stats['MaxDD'])
+    stats['++Trades'] = (rets<0).sum() / len(rets)
 
     if len(rets.columns) == 2:
         resetRets = rets.reset_index(drop=True)
         correlation = resetRets.iloc[:,0].corr(resetRets.iloc[:,1])
-        stats['Correlation'] = [correlation, 1]
+        stats['Corr'] = [correlation, 1]
 
     stats = round(stats, 2) * 100
-    stats[['Sharpe Ratio', 'Calmar Ratio']] = stats[['Sharpe Ratio', 'Calmar Ratio']] / 100
+    stats[['Sharpe', 'Calmar']] = stats[['Sharpe', 'Calmar']] / 100
 
     return stats
 

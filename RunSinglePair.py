@@ -22,7 +22,7 @@ if __name__ == "__main__":
     pair = pair #ETHBTC BTCUSDT
     interval = interval
     desiredInterval = '24h'
-    desiredHour = '02'
+    desiredHour = '03'
     switchInterval = True
     Direction = "Long" # Long, Short, LS
     commission = 10 ### bps
@@ -33,9 +33,9 @@ if __name__ == "__main__":
     N = 365
 
     # 8HR
-    dictParams = {'short_ma': [1],  ## {'short_ma': range(10, 1000, 10),
-                  'medium_ma': [21],  ## 'long_ma': range(100, 10000, 100),
-                  'long_ma': [45],
+    dictParams = {'short_ma': [2],  ## {'short_ma': range(10, 1000, 10),
+                  'medium_ma': [9],  ## 'long_ma': range(100, 10000, 100),
+                  'long_ma': [34],
                   'threshold': [0]}  ## 'long_ma': range(100, 10000, 100)
 
     # dictParams = {'short_ma': range(1, 5, 1),  ## {'short_ma': range(10, 1000, 10),
@@ -43,16 +43,7 @@ if __name__ == "__main__":
     #               'long_ma': range(21, 41, 3),
     #               'threshold': [0]}  ## 'long_ma': range(100, 10000, 100),
 
-    # idate = dt.datetime.strptime(sdate, "%Y-%m-%d")
-    # idate = idate + dt.timedelta(days=-100)
-    # idate = idate.strftime("%Y-%m-%d")
-    #
-    # klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=idate, end_str=edate)
-    # finaldata = binanceOHLC(klines)
-    # finaldata.index = pd.to_datetime(finaldata.index)
-
     finaldata = readpkl('cryptoData')
-
 
     if (switchInterval):
         finaldata = modifyOHLCtime(OHLC = finaldata,currentInterval = interval,desiredInterval = desiredInterval,
@@ -117,7 +108,7 @@ if __name__ == "__main__":
 
     print(f"Iterating {len(params)} {strName} combinations took {latency:.3f} seconds", '\n')
 
-    allPerform = allPerform.sort_values(by='Calmar Ratio', ascending=False)
+    allPerform = allPerform.sort_values(by='Calmar', ascending=False)
     print(allPerform)
 
 # aa = strResult['LongTradesAls']
@@ -127,7 +118,7 @@ if __name__ == "__main__":
 
 # strResult['Trades']
 # strResult['tradeAction']
-# strResult['allData']
+# print(strResult['allData'].head(5))
 # strResult['OriginalReturns']
 # savepkl('BTCETH1hPerform', allPerform)
 # strResult.keys()
