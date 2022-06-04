@@ -1,3 +1,5 @@
+import math
+
 from BinanceAPI import *
 from GlobalFunctions import *
 from Strategies import *
@@ -17,7 +19,7 @@ if __name__ == "__main__":
     edate = edate.strftime("%Y-%m-%d")
     # edate = "2022-05-12"
     pair = 'ETHBTC' #ETHBTC BTCUSDT
-    interval = '8h'
+    interval = '1d'
     Direction = "Long" # Long, Short, LS
     commission = 10 ### bps
     fundrate = 0 ### bps
@@ -44,6 +46,41 @@ if __name__ == "__main__":
     klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=idate, end_str=edate)
     finaldata = binanceOHLC(klines)
     finaldata.index = pd.to_datetime(finaldata.index)
+
+    def modifyOHLCtime(OHLC,currentInterval = '8h',desireInterval = '24h', desireHour = '16'):
+
+
+    firstDate = finaldata.index[0]
+    desireDate = firstDate.replace(hour=16)
+
+    aa = finaldata.head(100)
+    aa = finaldata.iloc[3:100]
+    aa[aa.index > desireDate]
+
+
+    daily = finaldata.head(10)
+
+
+    interval1 = int(interval[0])
+    obs = 24 / interval1
+    loop = math.floor(len(aa)/obs)
+
+    BuyOpen = math.inf * aa.copy()
+    BuyOpen = BuyOpen.iloc[0:loop]
+    BuyOpen = BuyOpen.reset_index()
+
+    highFreqData = aa.reset_index()
+
+    for i in range(loop):
+        BuyOpen['Close time'].iloc[i] = highFreqData['Close time'].iloc[int(obs*(i+1)-1)]
+        BuyOpen['Open'].iloc[i] = highFreqData['Open'].iloc[int(obs*(i + 1)-obs)]
+        BuyOpen['Close'].iloc[i] = highFreqData['Close'].iloc[int(obs * (i + 1)-1)]
+        BuyOpen['High'].iloc[i] = max(highFreqData['High'].iloc[range(int(obs*(i + 1)-obs),int(obs * (i + 1)))])
+        BuyOpen['Low'].iloc[i] = min(highFreqData['Low'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))])
+        BuyOpen['Volume'].iloc[i] = highFreqData['Volume'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
+        BuyOpen['Number of trades'].iloc[i] = highFreqData['Number of trades'].iloc[range(int(obs * (i + 1) - obs), int(obs * (i + 1)))].sum()
+
+    
 
 
     AllParams = expand_grid(dictParams)
@@ -99,7 +136,7 @@ if __name__ == "__main__":
     print(allPerform)
 
 # aa = strResult['LongTradesAls']
-# len(aa[aa['Return']<0]['Return'])
+# len(aa[aa['Return']<0]['Return']) / len(aa)
 #
 # aa.tail()
 
