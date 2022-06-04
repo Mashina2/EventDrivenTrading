@@ -5,6 +5,8 @@ from GlobalFunctions import *
 from Strategies import *
 from BackEngine import *
 import time as tt
+from RetrieveData import sdate, edate, pair, interval
+
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -14,15 +16,14 @@ if __name__ == "__main__":
 
     ### Fetch data first from binance "2020-08-04"##
     strategy = 'TSMA'
-    sdate = "2018-01-01"
-    edate = dt.datetime.today()
-    edate = edate.strftime("%Y-%m-%d")
+    sdate = sdate
+    edate = edate
     # edate = "2022-05-12"
-    pair = 'ETHBTC' #ETHBTC BTCUSDT
-    interval = '12h'
+    pair = pair #ETHBTC BTCUSDT
+    interval = interval
     desiredInterval = '24h'
-    desiredHour = '13'
-    switchInterval = False
+    desiredHour = '02'
+    switchInterval = True
     Direction = "Long" # Long, Short, LS
     commission = 10 ### bps
     fundrate = 0 ### bps
@@ -42,13 +43,16 @@ if __name__ == "__main__":
     #               'long_ma': range(21, 41, 3),
     #               'threshold': [0]}  ## 'long_ma': range(100, 10000, 100),
 
-    idate = dt.datetime.strptime(sdate, "%Y-%m-%d")
-    idate = idate + dt.timedelta(days=-100)
-    idate = idate.strftime("%Y-%m-%d")
+    # idate = dt.datetime.strptime(sdate, "%Y-%m-%d")
+    # idate = idate + dt.timedelta(days=-100)
+    # idate = idate.strftime("%Y-%m-%d")
+    #
+    # klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=idate, end_str=edate)
+    # finaldata = binanceOHLC(klines)
+    # finaldata.index = pd.to_datetime(finaldata.index)
 
-    klines = client.get_historical_klines(symbol=pair, interval=interval, start_str=idate, end_str=edate)
-    finaldata = binanceOHLC(klines)
-    finaldata.index = pd.to_datetime(finaldata.index)
+    finaldata = readpkl('cryptoData')
+
 
     if (switchInterval):
         finaldata = modifyOHLCtime(OHLC = finaldata,currentInterval = interval,desiredInterval = desiredInterval,

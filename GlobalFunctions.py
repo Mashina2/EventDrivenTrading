@@ -20,7 +20,7 @@ pd.set_option('display.max_rows', 150)
 pd.set_option('mode.chained_assignment', None) ## turning off SettingWithCopyWarning
 
 
-storePath = 'C:/OptionEngine/trunk/StoredFiles/'
+storePath = 'C:/StoredFiles/'
 
 def savepkl(filename, data):
     filename = storePath + filename + '.pkl'
