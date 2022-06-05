@@ -19,10 +19,10 @@ if __name__ == "__main__":
     sdate = sdate
     edate = edate
     # edate = "2022-05-12"
-    pair = pair #ETHBTC BTCUSDT
+    pair = 'ETHUSDT' #ETHBTC BTCUSDT
     interval = interval
     desiredInterval = '24h'
-    desiredHour = '03'
+    desiredHour = '06'
     switchInterval = True
     Direction = "Long" # Long, Short, LS
     commission = 10 ### bps
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     #               'long_ma': range(21, 41, 3),
     #               'threshold': [0]}  ## 'long_ma': range(100, 10000, 100),
 
-    finaldata = readpkl('cryptoData')
+    finaldata = readpkl(pair)
 
     if (switchInterval):
         finaldata = modifyOHLCtime(OHLC = finaldata,currentInterval = interval,desiredInterval = desiredInterval,
