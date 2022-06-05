@@ -65,7 +65,7 @@ if __name__ == "__main__":
         print('\n', '---------------Now doing combination ' f"{index}/{len(params)}---------------", '\n')
         row['index'] = index
         strResult = BacktestEngine(data = finaldata, strategy = strategy, plot = plot, comms=commission, fundrate = fundrate,
-                                   monthlyStats = monthlyStats, params = row, benchmark = pair, sdate = sdate)
+                                   monthlyStats = monthlyStats, params = row, benchmark = pair, sdate = sdate, edate = edate)
 
         allrets = strResult['strategyReturns']
         strName = allrets.columns[0]

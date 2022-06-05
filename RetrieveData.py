@@ -14,7 +14,7 @@ sdate = "2018-01-01"
 edate = dt.datetime.today()
 edate = edate.strftime("%Y-%m-%d")
 # edate = "2022-05-12"
-pair = 'ETHUSDT'  # ETHBTC BTCUSDT
+pair = 'ADAUSDT'  # ETHBTC BTCUSDT
 interval = '1h'
 
 if __name__ == "__main__":
