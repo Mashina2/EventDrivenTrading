@@ -17,7 +17,7 @@ if __name__ == "__main__":
     ### Fetch data first from binance "2020-08-04"##
     strategy = 'TSMA'
     sdate = sdate
-    edate = edate
+    edate = "2020-01-17"
     # edate = "2022-05-12"
     pair = 'ETHUSDT' #ETHBTC BTCUSDT
     interval = interval
