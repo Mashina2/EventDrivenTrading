@@ -7,6 +7,8 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from binance.enums import *
+import telegram_send
+
 
 strategy = 'TSMA'
 # edate = "2022-05-12"
@@ -28,16 +30,15 @@ bar = int(interval[:-1])
 start_str = f"{(longSMA + eps)*bar} minute ago UTC"
 
 x = dt.datetime.utcnow()
-startTime = x.replace(day=x.day, hour=9, minute=43, second=0, microsecond=0)
+startTime = x.replace(day=x.day, hour=10, minute=47, second=0, microsecond=0)
 
-allActions = ['NOTHING']
 while True:
 
     NOWutc = dt.datetime.utcnow()
 
     if NOWutc > startTime:
 
-        print(f"Running Factor for time {(NOWutc)}")
+        print(f"Running {strategy} for time {(NOWutc)}")
 
         currentData = client.get_historical_klines(symbol=pair, interval=interval,start_str=start_str)
         df = binanceOHLC(currentData)
@@ -47,13 +48,20 @@ while True:
 
         ### Check whether to buy or sell
         if Factor > threshold:
-            msg = 'BUY or HOLD'
+            msg = f"-------BUY {(pair)}-------"
         else:
-            msg = 'SELL or Stay Out'
+            msg = f"-------SELL {(pair)}-------"
+
+        print(msg)
+        telegram_send.send(messages=[msg])
+
+        startTime = startTime + dt.timedelta(minutes=1)
 
     else:
         sleep(1)
         print(dt.datetime.utcnow())
 
+### How to send telegram message
+# https://medium.com/@robertbracco1/how-to-write-a-telegram-bot-to-send-messages-with-python-bcdf45d0a580
 
 
