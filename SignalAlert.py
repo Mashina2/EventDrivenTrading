@@ -30,7 +30,7 @@ bar = int(interval[:-1])
 start_str = f"{(longSMA + eps)*bar} minute ago UTC"
 
 x = dt.datetime.utcnow()
-startTime = x.replace(day=x.day, hour=10, minute=47, second=0, microsecond=0)
+startTime = x.replace(day=x.day, hour=11, minute=10, second=0, microsecond=0)
 
 while True:
 
@@ -48,9 +48,9 @@ while True:
 
         ### Check whether to buy or sell
         if Factor > threshold:
-            msg = f"-------BUY {(pair)}-------"
+            msg = f"-------BUY  {(pair)}-------\n {NOWutc}"
         else:
-            msg = f"-------SELL {(pair)}-------"
+            msg = f"-------SELL  {(pair)}-------\n {NOWutc}"
 
         print(msg)
         telegram_send.send(messages=[msg])
@@ -61,7 +61,7 @@ while True:
         sleep(1)
         print(dt.datetime.utcnow())
 
-### How to send telegram message
+# How to send telegram message
 # https://medium.com/@robertbracco1/how-to-write-a-telegram-bot-to-send-messages-with-python-bcdf45d0a580
 
 
